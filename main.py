@@ -115,12 +115,14 @@ def fetch_notion_snippet_ids(date):
                 names = []
                 for j in i["properties"][DATABASE_TITLE_ID][type]:
                     names.append(j["text"]["content"])
+                content = fetch_notion_doc_md(i["id"])
                 result.append({
                     "id": i["id"],
                     "name": names,
                     "relations": relations,
                     "who": [j["name"] for j in i["properties"]["Who"]["multi_select"]],
-                    "who_email": [USER_EMAIL[j["name"]] for j in i["properties"]["Who"]["multi_select"]]
+                    "who_email": [USER_EMAIL[j["name"]] for j in i["properties"]["Who"]["multi_select"]],
+                    "content": content
                 })
 
     return result
