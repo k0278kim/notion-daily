@@ -6,6 +6,25 @@ import os
 from fastapi.responses import HTMLResponse
 from datetime import datetime
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# 허용할 Origin 지정 (배포된 Next.js 도메인 포함)
+origins = [
+    "http://localhost:3000",          # 개발용
+    "https://your-next-app.vercel.app",  # 배포된 Next.js 도메인
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],   # GET, POST 등
+    allow_headers=["*"],   # Authorization, Content-Type 등
+)
+
+
 load_dotenv()  # .env 파일 읽기
 
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
