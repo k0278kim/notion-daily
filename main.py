@@ -13,6 +13,14 @@ DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 SNIPPET_TOKEN = os.getenv("SNIPPET_TOKEN")
 
 DATABASE_TITLE_ID = "Name"
+DATABASE_AREA = "Area/Resource"
+DATABASE_SNIPPET_ID = "27645c06-3330-80d7-b46d-d88b0dda1ab8"
+
+USER_EMAIL = {
+    "뚜뚜": "ocean1229@gachon.ac.kr",
+    "양털": "k0278kim@gachon.ac.kr",
+    "도다리": "rimx2@gachon.ac.kr"
+}
 
 app = FastAPI()
 
@@ -67,6 +75,39 @@ def response_to_md(res):
         mds.append(block_to_markdown(row))
     return mds
 
+@app.get("/fetch_notion_snippet")
+def fetch_notion_snippet_ids(date):
+    url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
+
+    res = requests.post(url, headers=headers, json={})
+    result = []
+
+    if res.status_code != 200:
+        return {"error": res.status_code, "message": res.text}
+    
+    res = res.json()["results"]
+    
+    for i in res:
+        relations = []
+        for j in i["properties"][DATABASE_AREA]["relation"]:
+            relations.append(j["id"])
+        if (DATABASE_SNIPPET_ID in relations and i["properties"]["날짜"]["date"]):
+            notion_date = i["properties"]["날짜"]["date"]["start"]
+            if (notion_date == date):
+                type = i["properties"][DATABASE_TITLE_ID]["type"]
+                names = []
+                for j in i["properties"][DATABASE_TITLE_ID][type]:
+                    names.append(j["text"]["content"])
+                result.append({
+                    "id": i["id"],
+                    "name": names,
+                    "relations": relations,
+                    "who": [j["name"] for j in i["properties"]["Who"]["multi_select"]],
+                    "who_email": [USER_EMAIL[j["name"]] for j in i["properties"]["Who"]["multi_select"]]
+                })
+
+    return result
+
 @app.get("/fetch_notion_page_ids")
 def fetch_notion_page_ids():
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
@@ -81,12 +122,10 @@ def fetch_notion_page_ids():
     
     for i in res:
         type = i["properties"][DATABASE_TITLE_ID]["type"]
-        names = []
-        for j in i["properties"][DATABASE_TITLE_ID][type]:
-            names.append(j["text"]["content"])
         result.append({
             "id": i["id"],
-            "name": names
+            "name": [j["text"]["content"] for j in i["properties"][DATABASE_TITLE_ID][type]],
+            "who": [j["name"] for j in i["properties"]["Who"]["multi_select"]]
         })
 
     return result
