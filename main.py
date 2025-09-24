@@ -67,23 +67,59 @@ def fetch_notion():
 
     return res.json()
 
-def block_to_markdown(block):
+def block_to_markdown(block, depth=0):
+    """한 블록을 Markdown으로 변환"""
     t = block["type"]
+    indent = "  " * depth  # 들여쓰기 (공백 2칸)
+
     if t == "paragraph":
         text = "".join([x["text"]["content"] for x in block[t]["rich_text"]])
-        return text + "\n"
+        return indent + text + "\n"
+
     elif t.startswith("heading"):
         text = "".join([x["text"]["content"] for x in block[t]["rich_text"]])
         level = int(t[-1])
         return "#" * level + " " + text + "\n"
+
     elif t == "bulleted_list_item":
-        text = "- ".join([x["text"]["content"] for x in block[t]["rich_text"]])
-        return f"- {text}\n"
+        text = "".join([x["text"]["content"] for x in block[t]["rich_text"]])
+        return f"{indent}- {text}\n"
+
     elif t == "numbered_list_item":
         text = "".join([x["text"]["content"] for x in block[t]["rich_text"]])
-        return f"1. {text}\n"
+        return f"{indent}1. {text}\n"
+
     else:
-        return ""  # 다른 타입은 필요시 확장
+        return indent + "\n"
+
+
+def fetch_block_children(block_id, depth=0):
+    """Notion 블록 재귀 탐색"""
+    url = f"https://api.notion.com/v1/blocks/{block_id}/children"
+    res = requests.get(url, headers=headers)
+
+    if res.status_code != 200:
+        return []
+
+    results = res.json().get("results", [])
+    mds = []
+
+    for block in results:
+        mds.append(block_to_markdown(block, depth))
+
+        if block.get("has_children", False):
+            # 자식 블록 재귀적으로 불러오기
+            mds.extend(fetch_block_children(block["id"], depth + 1))
+
+    return mds
+
+
+@app.get("/fetch_notion_doc_md")
+def fetch_notion_doc_md(page_id: str):
+    page_id = page_id.replace("-", "")
+    md_blocks = fetch_block_children(page_id)
+    return md_blocks
+
     
 def response_to_md(res):
     results = res["results"]
@@ -150,19 +186,6 @@ def fetch_notion_page_ids():
     return result
 
 
-@app.get("/fetch_notion_doc_md")
-def fetch_notion_doc_md(page_id):
-    page_id = page_id.replace("-", "")
-
-    url = f"https://api.notion.com/v1/blocks/{page_id}/children"
-    res = requests.get(url, headers=headers)
-
-    if res.status_code != 200:
-        return {"error": res.status_code, "message": res.text}
-        
-    result = response_to_md(res.json())
-
-    return result
 
 @app.get("/fetch_snippet")
 def fetch_snippet(date_from, date_to):
