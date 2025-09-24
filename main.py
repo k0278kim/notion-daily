@@ -41,8 +41,6 @@ USER_EMAIL = {
     "도다리": "rimx2@gachon.ac.kr"
 }
 
-app = FastAPI()
-
 headers = {
     "Authorization": f"Bearer {NOTION_TOKEN}",
     "Notion-Version": "2022-06-28",
