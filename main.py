@@ -163,6 +163,33 @@ def fetch_notion_snippet_ids(date):
 
     return result
 
+@app.get("/fetch_notion_snippet_compare_check")
+def fetch_notion_snippet_compare_check(date):
+    result = {
+        "result": []
+    }
+    notion_snippet_ids = fetch_notion_snippet_ids(date)
+    snippets = fetch_snippet(date, date)
+
+    for notion in notion_snippet_ids:
+        for snippet in snippets:
+            if (notion["who_email"][0] == snippet["user_email"]):
+                print(notion["content"], snippet["content"])
+                if (("\n".join(notion["content"])) == (snippet["content"])):
+                    result["result"].append({ "user_email": notion["who_email"][0], "check": 1 })
+                else:
+                    result["result"].append({ "user_email": notion["who_email"][0], "check": 2 })
+
+    for user_email in USER_EMAIL.values():
+        isin = False
+        for dat in result["result"]:
+            if (dat["user_email"] == user_email):
+                isin = True
+        if (not isin):
+            result["result"].append({ "user_email": user_email, "check": 0 })
+
+    return result
+
 @app.get("/fetch_notion_page_ids")
 def fetch_notion_page_ids():
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
