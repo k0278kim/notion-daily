@@ -22,7 +22,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],   # GET, POST 등
-    allow_headers=["*"],   # Authorization, Content-Type 등
+    allow_headers=["*", "api-key"],   # Authorization, Content-Type 등
 )
 
 
@@ -60,6 +60,7 @@ def get_server_time():
 @app.get("/fetch_notion")
 def fetch_notion(api_key: str = Header(None)):
     if api_key != os.getenv("API_SECRET_KEY"):
+        print(api_key, os.getenv("API_SECRET_KEY"))
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
         url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
