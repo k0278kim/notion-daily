@@ -136,7 +136,7 @@ def response_to_md(res):
 
 @app.get("/fetch_notion_snippet")
 def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key")):
-    print("ㅗㅑ", api_key, os.getenv("API_SECRET_KEY"))
+    print("ㅗㅓ", api_key, api_key == os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -161,7 +161,7 @@ def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key"))
                     names = []
                     for j in i["properties"][DATABASE_TITLE_ID][type]:
                         names.append(j["text"]["content"])
-                    content = fetch_notion_doc_md(i["id"])
+                    content = fetch_notion_doc_md(i["id"], api_key)
                     result.append({
                         "id": i["id"],
                         "name": names,
@@ -175,15 +175,15 @@ def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key"))
 
 @app.get("/fetch_notion_snippet_compare_check")
 def fetch_notion_snippet_compare_check(date, api_key: str = Header(None, alias="Api-Key")):
-    print("ㅗㅑ", api_key, os.getenv("API_SECRET_KEY"))
+    print("ㄱㅅ", api_key, api_key == os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
         result = {
             "result": []
         }
-        notion_snippet_ids = fetch_notion_snippet_ids(date)
-        snippets = fetch_snippet(date, date)
+        notion_snippet_ids = fetch_notion_snippet_ids(date, api_key)
+        snippets = fetch_snippet(date, date, api_key)
 
         for notion in notion_snippet_ids:
             for snippet in snippets:
