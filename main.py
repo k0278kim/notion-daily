@@ -173,7 +173,7 @@ def fetch_notion_snippet_compare_check(date):
 
     for notion in notion_snippet_ids:
         for snippet in snippets:
-            if (notion["who_email"][0] == snippet["user_email"]):
+            if (notion["who_email"] and notion["who_email"][0] == snippet["user_email"]):
                 print(notion["content"], snippet["content"])
                 if (("\n".join(notion["content"])) == (snippet["content"])):
                     result["result"].append({ "user_email": notion["who_email"][0], "check": 1 })
