@@ -58,7 +58,7 @@ def get_server_time():
     }
 
 @app.get("/fetch_notion")
-def fetch_notion(api_key: str = Header(None)):
+def fetch_notion(api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
         print(api_key, os.getenv("API_SECRET_KEY"))
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -120,7 +120,7 @@ def fetch_block_children(block_id, depth=0):
 
 
 @app.get("/fetch_notion_doc_md")
-def fetch_notion_doc_md(page_id: str, api_key: str = Header(None)):
+def fetch_notion_doc_md(page_id: str, api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     page_id = page_id.replace("-", "")
@@ -136,7 +136,7 @@ def response_to_md(res):
     return mds
 
 @app.get("/fetch_notion_snippet")
-def fetch_notion_snippet_ids(date, api_key: str = Header(None)):
+def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -174,7 +174,7 @@ def fetch_notion_snippet_ids(date, api_key: str = Header(None)):
         return result
 
 @app.get("/fetch_notion_snippet_compare_check")
-def fetch_notion_snippet_compare_check(date, api_key: str = Header(None)):
+def fetch_notion_snippet_compare_check(date, api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -204,7 +204,7 @@ def fetch_notion_snippet_compare_check(date, api_key: str = Header(None)):
         return result
 
 @app.get("/fetch_notion_page_ids")
-def fetch_notion_page_ids(api_key: str = Header(None)):
+def fetch_notion_page_ids(api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -231,7 +231,7 @@ def fetch_notion_page_ids(api_key: str = Header(None)):
 
 
 @app.get("/fetch_snippet")
-def fetch_snippet(date_from, date_to, api_key: str = Header(None)):
+def fetch_snippet(date_from, date_to, api_key: str = Header(None, alias="Api-Key")):
 
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -252,7 +252,7 @@ class Snippet(BaseModel):
     content: str
 
 @app.post("/add_snippet")
-def add_snippet(snippet: Snippet, api_key: str = Header(None)):
+def add_snippet(snippet: Snippet, api_key: str = Header(None, alias="Api-Key")):
 
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
