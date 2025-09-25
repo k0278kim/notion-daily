@@ -14,7 +14,7 @@ app = FastAPI()
 # 허용할 Origin 지정 (배포된 Next.js 도메인 포함)
 origins = [
     "http://localhost:3000",          # 개발용
-    "https://your-next-app.vercel.app",  # 배포된 Next.js 도메인
+    "https://daily-utils-plantfarm.vercel.app",  # 배포된 Next.js 도메인
 ]
 
 app.add_middleware(
