@@ -136,7 +136,6 @@ def response_to_md(res):
 
 @app.get("/fetch_notion_snippet")
 def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key")):
-    print("ㅗㅓ", api_key, api_key == os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -175,7 +174,6 @@ def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key"))
 
 @app.get("/fetch_notion_snippet_compare_check")
 def fetch_notion_snippet_compare_check(date, api_key: str = Header(None, alias="Api-Key")):
-    print("ㄱㅅ", api_key, api_key == os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
