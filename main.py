@@ -60,7 +60,6 @@ def get_server_time():
 @app.get("/fetch_notion")
 def fetch_notion(api_key: str = Header(None, alias="Api-Key")):
     if api_key != os.getenv("API_SECRET_KEY"):
-        print(api_key, os.getenv("API_SECRET_KEY"))
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
         url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
@@ -137,6 +136,7 @@ def response_to_md(res):
 
 @app.get("/fetch_notion_snippet")
 def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key")):
+    print("ㅗㅑ", api_key, os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
@@ -175,6 +175,7 @@ def fetch_notion_snippet_ids(date, api_key: str = Header(None, alias="Api-Key"))
 
 @app.get("/fetch_notion_snippet_compare_check")
 def fetch_notion_snippet_compare_check(date, api_key: str = Header(None, alias="Api-Key")):
+    print("ㅗㅑ", api_key, os.getenv("API_SECRET_KEY"))
     if api_key != os.getenv("API_SECRET_KEY"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     else:
